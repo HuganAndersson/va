@@ -22,10 +22,11 @@ class Ball:
     def get_coordinates(self):
         return self.coordinates
 
-    def move(self,canvas,new_speed,window):
+    def move(self,canvas,new_speed,window,que):
         self.speed_x=new_speed[0]
         self.speed_y=new_speed[1]
         canvas.move(self.color,self.speed_x,self.speed_y)
+        self.coordinates = (self.coordinates[0]+self.speed_x,self.coordinates[1]+self.speed_y)
 
         if math.isclose(self.speed_x,0,abs_tol=0.00001) == False:
             if abs(self.speed_x) < friction:
@@ -44,16 +45,15 @@ class Ball:
                 self.speed_y += friction
 
         new_speed =(self.speed_x,self.speed_y)
-        self.coordinates = (self.coordinates[0]+self.speed_x,self.coordinates[1]+self.speed_y)
-        print(self.coordinates)
         
         if  math.isclose(self.speed_x,0,abs_tol=0.00001) == False or math.isclose(self.speed_y,0,abs_tol=0.00001) == False:
-            window.after(1, self.move(canvas,new_speed,window))
-
+            window.after(50, lambda: self.move(canvas,new_speed,window,que))
+        if  math.isclose(self.speed_x,0,abs_tol=0.00001) and math.isclose(self.speed_y,0,abs_tol=0.00001):
+            que.update_position(self,canvas)
         
 
         
-        #canvas.move(self.color,new_coordinates[0],new_coordinates[1])
+
         
         
 
@@ -78,17 +78,16 @@ class Que:
         self.que = canvas.create_line(self.coordinates[0]+self.radius*math.cos(self.theta),self.coordinates[1]+self.radius*math.sin(self.theta),
                            self.coordinates[0]+self.radius*(math.cos(self.theta)*10),self.coordinates[1]+self.radius*(math.sin(self.theta)*10),fill="black",arrow = tk.LAST,tags="que")
         
-    #def move_withball(self,new_coordinates,canvas):
-            #canvas.delete(self.que)
-            #self.coordinates = new_coordinates
-           # self.que = canvas.create_line(self.coordinates[0]+self.radius*math.cos(self.theta),self.coordinates[1]+self.radius*math.sin(self.theta),
-                         #  self.coordinates[0]+self.radius*(math.cos(self.theta)*10),self.coordinates[1]+self.radius*(math.sin(self.theta)*10),fill="black",arrow = tk.LAST,tags="que")"""
-        
+   
+    
     def strike(self,ball,canvas,window):
-        speed_x = (5*(math.cos(self.theta)))
-        speed_y = (5*(math.sin(self.theta)))
-        ball.move(canvas,(speed_x,speed_y),window)
+        speed_x = (10*(math.cos(self.theta)))
+        speed_y = (10*(math.sin(self.theta)))
+        ball.move(canvas,(speed_x,speed_y),window,self)
         canvas.delete(self.que)
+        
+
+    def update_position(self,ball,canvas):
         print(ball.get_coordinates())
         self.coordinates =  ball.get_coordinates()
         x1 =(self.coordinates[0]+self.radius*math.cos(self.theta))-(ball_size/2)
@@ -96,20 +95,6 @@ class Que:
         x2 = (self.coordinates[0]+self.radius*(math.cos(self.theta)*10))+(ball_size/2)
         y2 = (self.coordinates[1]+self.radius*(math.sin(self.theta)*10))+(ball_size/2)
         self.que = canvas.create_line(x1,y1,x2,y2,fill="black",arrow = tk.LAST,tags="que")
-        
-        # self.que = canvas.create_line(self.coordinates[0]+self.radius*math.cos(self.theta),self.coordinates[1]+self.radius*math.sin(self.theta),
-                           #self.coordinates[0]+self.radius*(math.cos(self.theta)*10),self.coordinates[1]+self.radius*(math.sin(self.theta)*10),fill="black",arrow = tk.LAST,tags="que")
-    
-    
-
-        
-        
-        
-
-
-
-
-
 
         
 
@@ -140,11 +125,7 @@ def __main__():
             que.move_que(-1,canvas)
         elif buttonpress == "right":
             que.move_que(1,canvas)
-        
-    def move_after_strike(que):
-        del que
-        que = Que(white_ball.get_coordinates(),angle,canvas)
-        return que
+    
 
 
 
