@@ -2,7 +2,7 @@ import tkinter as tk
 import math
 
 ball_size = 20
-friction = 0.1
+friction = 1.02
 ball_amount = 2
 player_amount = 1
 angle = 0
@@ -26,27 +26,17 @@ class Ball:
         self.speed_x=new_speed[0]
         self.speed_y=new_speed[1]
         canvas.move(self.color,self.speed_x,self.speed_y)
-        self.coordinates = (self.coordinates[0]+self.speed_x,self.coordinates[1]+self.speed_y)
-
-        if math.isclose(self.speed_x,0,abs_tol=0.00001) == False:
-            if abs(self.speed_x) < friction:
-                self.speed_x = 0
-            elif self.speed_x > 0:
-                self.speed_x = self.speed_x-friction
-            elif self.speed_x < 0:
-                self.speed_x = self.speed_x+friction
-        if math.isclose(self.speed_y,0,abs_tol=0.000001) == False:
-            if abs(self.speed_y) < friction:
-                self.speed_y = 0
-
-            elif self.speed_y > 0:
-                self.speed_y -= friction
-            elif self.speed_y < 0:
-                self.speed_y += friction
+        self.coordinates = (self.coordinates[0]+self.speed_x,self.coordinates[1]+self.speed_y)  
+        if abs(self.speed_y) < 1 and abs(self.speed_x)< 1:
+            self.speed_x = 0
+            self.speed_y = 0
+        else:
+            self.speed_x = self.speed_x/friction
+            self.speed_y = self.speed_y/friction
 
         new_speed =(self.speed_x,self.speed_y)
-        
-        if  math.isclose(self.speed_x,0,abs_tol=0.00001) == False or math.isclose(self.speed_y,0,abs_tol=0.00001) == False:
+    
+        if  self.speed_x != 0 or self.speed_y != 0:
             window.after(50, lambda: self.move(canvas,new_speed,window,que))
         if  math.isclose(self.speed_x,0,abs_tol=0.00001) and math.isclose(self.speed_y,0,abs_tol=0.00001):
             que.update_position(self,canvas)
@@ -90,10 +80,10 @@ class Que:
     def update_position(self,ball,canvas):
         print(ball.get_coordinates())
         self.coordinates =  ball.get_coordinates()
-        x1 =(self.coordinates[0]+self.radius*math.cos(self.theta))-(ball_size/2)
-        y1 = (self.coordinates[1]+self.radius*math.sin(self.theta))-(ball_size/2)
-        x2 = (self.coordinates[0]+self.radius*(math.cos(self.theta)*10))+(ball_size/2)
-        y2 = (self.coordinates[1]+self.radius*(math.sin(self.theta)*10))+(ball_size/2)
+        x1 =(self.coordinates[0]+self.radius*math.cos(self.theta))
+        y1 = (self.coordinates[1]+self.radius*math.sin(self.theta))
+        x2 = (self.coordinates[0]+self.radius*(math.cos(self.theta)*10))
+        y2 = (self.coordinates[1]+self.radius*(math.sin(self.theta)*10))
         self.que = canvas.create_line(x1,y1,x2,y2,fill="black",arrow = tk.LAST,tags="que")
 
         
@@ -126,6 +116,7 @@ def __main__():
         elif buttonpress == "right":
             que.move_que(1,canvas)
     
+    def move_ball()
 
 
 
